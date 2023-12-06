@@ -324,7 +324,9 @@ class GaussianDiffusion(nn.Module):
 
             if time > 0:
                 # the first half of each sequence is the second half of the previous one
-                x[1:, :half] = x[:-1, half:]
+                x[1:, :sec_one] = x[:-1, sec_one:]
+                x[1:, sec_one*4:] = x[:-1, :sec_one*4]
+
         return x
 
     @torch.no_grad()
