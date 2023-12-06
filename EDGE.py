@@ -82,7 +82,7 @@ class EDGE:
             repr_dim,
             smpl,
             schedule="cosine",
-            n_timestep=1000,
+            n_timestep=500,
             predict_epsilon=False,
             loss_type="l2",
             use_p2=False,
