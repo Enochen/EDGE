@@ -90,7 +90,8 @@ def test(opt):
                 # reps = jukemirlib.extract(
                 #     audio, layers=[66], downsample_target_rate=30
                 # )[66]
-                # jukemirlib.setup_models(cache_dir="/content/drive/MyDrive/jukemirlib/jukemirlib")
+
+                jukemirlib.setup_models(cache_dir="/content/drive/MyDrive/jukemirlib", device="cuda")
 
                 reps, _ = feature_func(file)
                 # save reps
