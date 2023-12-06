@@ -298,7 +298,7 @@ class GaussianDiffusion(nn.Module):
 
         assert batch > 1
         assert x.shape[1] % 2 == 0
-        sec_one = x.shape[1] // 5
+        half = x.shape[1] // 2
 
         x_start = None
 
@@ -323,9 +323,15 @@ class GaussianDiffusion(nn.Module):
                   sigma * noise
 
             if time > 0:
+
+                if time % 15 == 0 and time < total_timesteps * .6:
+                # for each index, take random index and average it with this one
+                    for idx in range(x.shape[0]):
+                        rand_idx = np.random.randint(x.shape[0])
+                        x[idx] = (x[idx] + x[rand_idx]) / 2
+
                 # the first half of each sequence is the second half of the previous one
-                x[1:, :sec_one] = x[:-1, sec_one:]
-                x[1:, sec_one*4:] = x[:-1, :sec_one*4]
+                x[1:, :half] = x[:-1, half:]
 
         return x
 
