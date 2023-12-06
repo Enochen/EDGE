@@ -147,18 +147,18 @@ class GaussianDiffusion(nn.Module):
             )
         else:
             return noise
-    
+
     def predict_noise_from_start(self, x_t, t, x0):
         return (
             (extract(self.sqrt_recip_alphas_cumprod, t, x_t.shape) * x_t - x0) / \
             extract(self.sqrt_recipm1_alphas_cumprod, t, x_t.shape)
         )
-    
+
     def model_predictions(self, x, cond, t, weight=None, clip_x_start = False):
         weight = weight if weight is not None else self.guidance_weight
         model_output = self.model.guided_forward(x, cond, t, weight)
         maybe_clip = partial(torch.clamp, min = -1., max = 1.) if clip_x_start else identity
-        
+
         x_start = model_output
         x_start = maybe_clip(x_start)
         pred_noise = self.predict_noise_from_start(x, t, x_start)
@@ -246,7 +246,7 @@ class GaussianDiffusion(nn.Module):
             return x, diffusion
         else:
             return x
-        
+
     @torch.no_grad()
     def ddim_sample(self, shape, cond, **kwargs):
         batch, device, total_timesteps, sampling_timesteps, eta = shape[0], self.betas.device, self.n_timestep, 50, 1
@@ -280,11 +280,11 @@ class GaussianDiffusion(nn.Module):
                   c * pred_noise + \
                   sigma * noise
         return x
-    
+
     @torch.no_grad()
     def long_ddim_sample(self, shape, cond, **kwargs):
         batch, device, total_timesteps, sampling_timesteps, eta = shape[0], self.betas.device, self.n_timestep, 50, 1
-        
+
         if batch == 1:
             return self.ddim_sample(shape, cond)
 
@@ -295,16 +295,16 @@ class GaussianDiffusion(nn.Module):
 
         x = torch.randn(shape, device = device)
         cond = cond.to(device)
-        
+
         assert batch > 1
         assert x.shape[1] % 2 == 0
-        half = x.shape[1] // 2
+        sec_one = x.shape[1] // 5
 
         x_start = None
 
         for time, time_next, weight in tqdm(time_pairs, desc = 'sampling loop time step'):
             time_cond = torch.full((batch,), time, device=device, dtype=torch.long)
-            pred_noise, x_start, *_ = self.model_predictions(x, cond, time_cond, weight=weight, clip_x_start = self.clip_denoised) 
+            pred_noise, x_start, *_ = self.model_predictions(x, cond, time_cond, weight=weight, clip_x_start = self.clip_denoised)
 
             if time_next < 0:
                 x = x_start
@@ -321,7 +321,7 @@ class GaussianDiffusion(nn.Module):
             x = x_start * alpha_next.sqrt() + \
                   c * pred_noise + \
                   sigma * noise
-            
+
             if time > 0:
                 # the first half of each sequence is the second half of the previous one
                 x[1:, :half] = x[:-1, half:]
@@ -409,7 +409,7 @@ class GaussianDiffusion(nn.Module):
             # enforce constraint between each denoising step
             if i > 0:
                 # the first half of each sequence is the second half of the previous one
-                x[1:, :half] = x[:-1, half:] 
+                x[1:, :half] = x[:-1, half:]
 
             if return_diffusion:
                 diffusion.append(x)
