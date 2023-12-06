@@ -11,7 +11,7 @@ import torch
 from tqdm import tqdm
 
 from args import parse_test_opt
-from data.slice import slice_audio
+from data.slice import slice_audio,slice_audio_random
 from EDGE import EDGE
 from data.audio_extraction.baseline_features import extract as baseline_extract
 from data.audio_extraction.jukebox_features import extract as juke_extract
@@ -75,7 +75,8 @@ def test(opt):
                 dirname = temp_dir.name
             # slice the audio file
             print(f"Slicing {wav_file}")
-            slice_audio(wav_file, 2.5, 5.0, dirname)
+            # slice_audio(wav_file, 2.5, 5.0, dirname)
+            slice_audio_random(wav_file, 2.5, 5.0, dirname)
             file_list = sorted(glob.glob(f"{dirname}/*.wav"), key=stringintkey)
             # randomly sample a chunk of length at most sample_size
             rand_idx = random.randint(0, len(file_list) - sample_size)

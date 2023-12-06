@@ -23,6 +23,26 @@ def slice_audio(audio_file, stride, length, out_dir):
         idx += 1
     return idx
 
+def slice_audio_random(audio_file, stride, length, out_dir):
+    # stride, length in seconds
+    audio, sr = lr.load(audio_file, sr=None)
+    file_name = os.path.splitext(os.path.basename(audio_file))[0]
+    start_idx = 0
+    idx = 0
+    window = int(length * sr)
+    stride_step = int(stride * sr)
+    random_idx = np.random.uniform(0,start_idx)
+
+    while start_idx <= len(audio) - window:
+        if start_idx ==0:
+            audio[start_idx : start_idx + window]
+        else:
+            audio_slice = np.concatenate(audio[random_idx: random_idx+sr], audio[start_idx: start_idx+window-sr]) #audio[start_idx : start_idx + window]
+        sf.write(f"{out_dir}/{file_name}_slice{idx}.wav", audio_slice, sr)
+        start_idx += stride_step
+        idx += 1
+    return idx
+
 
 def slice_motion(motion_file, stride, length, num_slices, out_dir):
     motion = pickle.load(open(motion_file, "rb"))

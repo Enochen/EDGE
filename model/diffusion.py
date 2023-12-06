@@ -3,6 +3,7 @@ import os
 import pickle
 from pathlib import Path
 from functools import partial
+import random
 
 import numpy as np
 import torch
@@ -268,7 +269,7 @@ class GaussianDiffusion(nn.Module):
                 x = x_start
                 continue
 
-            alpha = self.alphas_cumprod[time]
+            alpha = self.alphas_cumprod[time]   
             alpha_next = self.alphas_cumprod[time_next]
 
             sigma = eta * ((1 - alpha / alpha_next) * (1 - alpha_next) / (1 - alpha)).sqrt()
@@ -324,6 +325,7 @@ class GaussianDiffusion(nn.Module):
             
             if time > 0:
                 # the first half of each sequence is the second half of the previous one
+                
                 x[1:, :half] = x[:-1, half:]
         return x
 
@@ -408,7 +410,12 @@ class GaussianDiffusion(nn.Module):
             x, _ = self.p_sample(x, cond, timesteps)
             # enforce constraint between each denoising step
             if i > 0:
-                # the first half of each sequence is the second half of the previous one
+                # the first half of each sequence is 1/4 from a random prev sequence + 3/4 of the previous one
+
+                # index1 = random.randint(0, 1000) #numSeqs is the number of sequences that already happened 
+                # threeFourths = 3*x.shape[1] // 4
+                # oneFourths = x.shape[1] // 4
+                # x[1:, :half] = x[:index1, oneFourths] + x[:-1, threeFourths] 
                 x[1:, :half] = x[:-1, half:] 
 
             if return_diffusion:
