@@ -37,8 +37,7 @@ def slice_audio_random(audio_file, stride, length, out_dir):
         audio_slice = audio[start_idx : start_idx + window]
 
         if start_idx != 0:
-            if start_idx+window-sr >= 0:
-                audio_slice = np.concatenate(audio[random_idx: random_idx+sr], audio[start_idx: start_idx+window-sr]) #audio[start_idx : start_idx + window]
+            audio_slice = np.concatenate(audio[random_idx: random_idx+sr], audio[start_idx: start_idx+window-sr]) #audio[start_idx : start_idx + window]
 
         sf.write(f"{out_dir}/{file_name}_slice{idx}.wav", audio_slice, sr)
         start_idx += stride_step
