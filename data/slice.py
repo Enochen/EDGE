@@ -32,7 +32,10 @@ def slice_audio_random(audio_file, stride, length, out_dir):
     window = int(length * sr)
     stride_step = int(stride * sr)
     print(start_idx)
-    random_idx = np.random.randint(0,start_idx)
+
+    random_idx = 1
+    if start_idx != 0:
+        random_idx = np.random.randint(0,start_idx)
 
     while start_idx <= len(audio) - window:
         audio_slice = audio[start_idx : start_idx + window]
