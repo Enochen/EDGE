@@ -11,7 +11,7 @@ import torch
 from tqdm import tqdm
 
 from args import parse_test_opt
-from data.slice import slice_audio,slice_audio_random
+from data.slice import slice_audio, slice_audio_random
 from EDGE import EDGE
 from data.audio_extraction.baseline_features import extract as baseline_extract
 from data.audio_extraction.jukebox_features import extract as juke_extract
